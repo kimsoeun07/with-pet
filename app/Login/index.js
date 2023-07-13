@@ -6,7 +6,7 @@ export default function Page() {
       <View style={styles.container}>
         <View style={styles.main}>
           <Text style={styles.title}>로그인 페이지</Text>
-          <Link href={"/map"}>로그인 완료</Link>
+          <Link href={"/tap/Note"}>로그인 완료</Link>
         </View>
       </View>
     );

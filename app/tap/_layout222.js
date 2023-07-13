@@ -7,7 +7,7 @@ export default function Layout() {
         headerStyle: {
           backgroundColor: "#f4511e",
         },
-        title : 'ddd',
+        title : 'with-pet',
         headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
