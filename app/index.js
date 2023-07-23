@@ -1,13 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Link } from 'expo-router'
+import React from "react";
+import { StyleSheet, View, Text, Image } from "react-native";
+import { Link } from 'expo-router';
+import { block } from "react-native-reanimated";
 
 export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-        <Link href={"/Login"} style={{fontSize:40}}>로그인</Link>
+        <Text style={styles.subtitle}>With_Pet</Text>
+        <Link href={"/Login"} style={[styles.login]}>로그인</Link>
+        <Image source={require('./img/Illustration/Workflow-Teamwork.png')} style={styles.image} />
       </View>
     </View>
   );
@@ -25,12 +27,26 @@ const styles = StyleSheet.create({
     maxWidth: 960,
     marginHorizontal: "auto",
   },
-  title: {
-    fontSize: 64,
+  login: {
+    fontSize: 25,
     fontWeight: "bold",
+    backgroundColor: '#0f766e',
+    color: 'white',
+    textAlign: 'center',
+    borderRadius: 10,
+    margin: 30,
+    padding: 5,
+    display: 'inline-block',
   },
   subtitle: {
-    fontSize: 36,
-    color: "#38434D",
+    fontSize: 40,
+    fontWeight: "bold",
+    color: '#2dd4bf',
+    marginTop: -50,
+    textAlign: 'center',
   },
+  image: {
+    width: 300,
+    height: 300,
+  }
 });
