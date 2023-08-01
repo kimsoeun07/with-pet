@@ -1,13 +1,12 @@
 import React from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { Link } from 'expo-router';
-import { block } from "react-native-reanimated";
 
 export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <Text style={styles.subtitle}>With_Pet</Text>
+        <Text style={styles.subtitle}>With Pet</Text>
         <Link href={"/Login"} style={[styles.login]}>로그인</Link>
         <Image source={require('./img/Illustration/Workflow-Teamwork.png')} style={styles.image} />
       </View>
@@ -44,6 +43,7 @@ const styles = StyleSheet.create({
     color: '#2dd4bf',
     marginTop: -50,
     textAlign: 'center',
+    fontFamily: 'Jockey One',
   },
   image: {
     width: 300,

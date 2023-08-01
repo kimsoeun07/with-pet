@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { format } from "date-fns";
 import { Calendar } from "react-native-calendars";
 import { StyleSheet } from "react-native";
-import Layout from "./_layout_tap";
 
 function CalendarView() {
 
@@ -49,7 +48,6 @@ function CalendarView() {
       onDayPress={(day) => {
         setSelectedDate(day.dateString)
       }} />
-      <Layout></Layout>
     </>
   );
 }
