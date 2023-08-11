@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 30,
     padding: 5,
-    display: 'inline-block',
   },
   subtitle: {
     fontSize: 40,

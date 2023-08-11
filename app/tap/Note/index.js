@@ -2,6 +2,7 @@ import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {View, Button, Text} from 'react-native';
 import Calendar from './Calendar';
+import walkRecord from './walkRecord'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,29 +15,15 @@ function MainScreen() {
       />
       <Tab.Screen
         name="산책 기록"
-        component={SearchScreen}
-      />
-      <Tab.Screen
-        name="몸무게 변화"
-        component={NotificationScreen}
+        component={walkRecord}
       />
     </Tab.Navigator>
   );
 }
-function HomeScreen({navigation}) {
-  return (
-    <View>
-      <Text>Home</Text>
-    </View>
-  );
-}
+
 
 function SearchScreen() {
   return <Text>Search</Text>;
-}
-
-function NotificationScreen() {
-  return <Text>Notification</Text>;
 }
 
 function MessageScreen() {

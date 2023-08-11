@@ -8,6 +8,7 @@ import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, C
 import { useNavigation } from '@react-navigation/native';
 
 
+
 // Firebase 프로젝트의 구성 정보
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
@@ -102,6 +103,33 @@ export default function AuthTab() {
 
   //로그인 디자인 nativebase
   const Example = () => {
+
+    // 유효성 검사 디자인
+    const [formData, setData] = React.useState({});
+    const [errors, setErrors] = React.useState({});
+
+    const validate = () => {
+      if (formData.name === undefined) {
+        setErrors({
+          ...errors,
+          name: 'Name is required'
+        });
+        return false;
+      } else if (formData.name.length < 3) {
+        setErrors({
+          ...errors,
+          name: 'Name is too short'
+        });
+        return false;
+      }
+
+      return true;
+    };
+    const onSubmit = () => {
+      validate() ? console.log('Submitted') : console.log('Validation Failed');
+    };
+
+
     return <Center w="100%">
       <Box safeArea p="2" py="8" w="90%" maxW="290">
         <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
@@ -118,8 +146,25 @@ export default function AuthTab() {
         <VStack space={3} mt="5">
           <FormControl>
             <FormControl.Label>Email ID</FormControl.Label>
-            <Input />
+
+            {/* 유효성 */}
+            <FormControl isRequired isInvalid={'name' in errors}>
+              <Input placeholder="John" onChangeText={value => setData({
+                ...formData,
+                name: value
+              })} />
+              {'name' in errors ? <FormControl.ErrorMessage>Error</FormControl.ErrorMessage> : <FormControl.HelperText>
+                Name should contain atleast 3 character.
+              </FormControl.HelperText>}
+            </FormControl>
+            <FormControl.ErrorMessage _text={{
+              fontSize: 'xs'
+            }}>
+              Error Name
+            </FormControl.ErrorMessage>
           </FormControl>
+
+
           <FormControl>
             <FormControl.Label>Password</FormControl.Label>
             <Input type="password" />
@@ -131,7 +176,12 @@ export default function AuthTab() {
               Forget Password?
             </Link> */}
           </FormControl>
-          <Button mt="2" colorScheme="indigo" onPress={() => navigation.navigate("./tap/bottomBar")}>
+
+
+
+          {/* 영기 온프레스 수정당한 부분 */}
+          <Button mt="2" colorScheme="indigo" onPress={onSubmit}>
+            {/* onPress={() => navigation.navigate("./tap/bottomBar")} */}
             Sign in
           </Button>
           <HStack mt="6" justifyContent="center">
@@ -166,7 +216,6 @@ export default function AuthTab() {
           <Example />
         </Center>
       </NativeBaseProvider>
-      
     </>
   );
 }

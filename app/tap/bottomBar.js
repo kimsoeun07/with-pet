@@ -1,20 +1,21 @@
 import React from 'react';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {View, Button, Text} from 'react-native';
+import {View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Note from './Note';
 import user from './user';
 import notification from './notification';
+import walk from './walk';
 
 const Tab = createMaterialBottomTabNavigator();
 
 function MainScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
-      tabBarOptions={{
-        showIcon: true,
-      }}>
+      shifting={true}
+      activeTintColor="black"
+      inactiveTintColor="gray"
+      barStyle={{backgroundColor: 'white'}}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -46,7 +47,7 @@ function MainScreen() {
       />
       <Tab.Screen
         name="Walk"
-        component={walkScreen}
+        component={walk}
         options={{
           tabBarLabel: '산책',
           tabBarIcon: ({color}) => (
@@ -54,7 +55,7 @@ function MainScreen() {
           ),
         }}
       />
-      
+
       <Tab.Screen
         name="user"
         component={user}
@@ -68,28 +69,13 @@ function MainScreen() {
     </Tab.Navigator>
   );
 }
+
 function HomeScreen({navigation}) {
   return (
     <View>
       <Text>Home</Text>
-      {/* <Button
-        title="상세보기"
-        onPress={() => navigation.push('Detail', {id: 1})}
-      /> */}
     </View>
   );
-}
-
-function SearchScreen() {
-  return <Text>Search</Text>;
-}
-
-function walkScreen() {
-  return <Text>walk</Text>;
-}
-
-function MessageScreen() {
-  return <Text>Message</Text>;
 }
 
 export default MainScreen;
