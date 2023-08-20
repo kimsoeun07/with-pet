@@ -13,8 +13,11 @@ function MainScreen() {
   return (
     <Tab.Navigator
       shifting={true}
+      //라벨 표시 여부. false는 항상 표시
       activeTintColor="black"
+      //선택된 아이콘의 색
       inactiveTintColor="gray"
+      //선택되지 않은 아이콘의 색
       barStyle={{backgroundColor: 'white'}}>
       <Tab.Screen
         name="Home"

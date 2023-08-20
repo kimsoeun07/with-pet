@@ -44,7 +44,13 @@ function CalendarView() {
   const [memoData, setMemoData] = useState({});
 
   const handleMemoChange = (text) => {
+    // setMemo(text);
+
     setMemo(text);
+    setMemoData((prevMemoData) => ({
+      ...prevMemoData,
+      [selectedDate]: text,
+    }));
   };
 
   const handleSaveMemo = () => {

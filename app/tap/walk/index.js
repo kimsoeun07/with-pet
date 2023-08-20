@@ -6,17 +6,22 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <Text>walk tap</Text>
+      
       <View style={styles.imgContainer}>
         <Image source={require('./img-walk/Illustration/Animal.png')} style={styles.img} />
       </View>
+        <Text style={{fontWeight: "bold", fontSize: 15, margin: 5}}>산책할 반려동물 선택</Text>
+
+
       <View style={styles.cheakBoxContainer}>
         <CheckBox
           value={isSelected}
           onValueChange={setSelection}
-          style={styles.checkbox} />
+           />
         <Text style={styles.text}>강아지1</Text>
       </View>
+
+      
       <TouchableOpacity style={styles.but}>
         <Text style={styles.butText}>산책 시작</Text>
       </TouchableOpacity>
@@ -32,6 +37,7 @@ const styles = StyleSheet.create({
   },
 
   imgContainer: {
+    maxWidth: 300,
     width: "50%",
     aspectRatio: 1, // 이미지의 가로:세로 비율을 1:1로 유지합니다.
     justifyContent: "center", // 수직 가운데 정렬
@@ -63,14 +69,15 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "50%",
     margin: 10,
-    backgroundColor: "gray",
     borderRadius: 25,
     padding: 15,
-    flexDirection: "row"
+    flexDirection: "row",
+    backgroundColor: "lightgray"
   },
 
   text: {
-    color: "white",
-    marginLeft: 10
+    color: "black",
+    marginLeft: 10,
+    fontSize: 15
   }
 });

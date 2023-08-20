@@ -47,7 +47,16 @@ const loginWithGoogle = async (firebaseConfig) => {
     // 그 해석 result에서 토큰이랑 유저 받아오는 것
     const user = result.user;
     console.log(user);
+
+
+    //여기가 방금 추가한 부분!!
+    navigation.navigate("./tap/bottomBar");
+
+
+
+
     return { token, user }
+
   } catch (error) {
     if (error instanceof FirebaseError) {
       //파이어베이스 오류인 경우
@@ -71,12 +80,11 @@ export default function AuthTab() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     try {
       // Firebase 인증 메서드 호출
       await loginWithEmailAndPassword(email, password);
+      alert("로그인 성공!");
     } catch (error) {
       // 로그인 실패 시 에러 메시지 출력
       setErrorMessage(error.message);
@@ -112,21 +120,33 @@ export default function AuthTab() {
       if (formData.name === undefined) {
         setErrors({
           ...errors,
-          name: 'Name is required'
+          name: 'email을 입력해 주세요'
         });
         return false;
-      } else if (formData.name.length < 3) {
+      } else if (!formData.name.includes('@')) {
         setErrors({
           ...errors,
-          name: 'Name is too short'
+          name: '제대로 된 이메일을 입력해 주세요'
+        });
+        return false;
+      } else if (formData.password === undefined) {
+        setErrors({
+          ...errors,
+          name: 'password를 입력해 주세요'
         });
         return false;
       }
 
       return true;
     };
+
+
     const onSubmit = () => {
-      validate() ? console.log('Submitted') : console.log('Validation Failed');
+      if (validate()) {
+        navigation.navigate("./tap/bottomBar");
+      } else {
+        alert('아이디 또는 비밀번호가 잘못되었습니다.')
+      }
     };
 
 
@@ -135,68 +155,55 @@ export default function AuthTab() {
         <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
           color: "warmGray.50"
         }}>
-          Welcome
+          WithPet 로그인
         </Heading>
         <Heading mt="1" _dark={{
           color: "warmGray.200"
         }} color="coolGray.600" fontWeight="medium" size="xs">
-          Sign in to continue!
+          계정이 없어도 로그인이 가능합니다
         </Heading>
 
         <VStack space={3} mt="5">
           <FormControl>
             <FormControl.Label>Email ID</FormControl.Label>
 
-            {/* 유효성 */}
-            <FormControl isRequired isInvalid={'name' in errors}>
-              <Input placeholder="John" onChangeText={value => setData({
-                ...formData,
-                name: value
-              })} />
-              {'name' in errors ? <FormControl.ErrorMessage>Error</FormControl.ErrorMessage> : <FormControl.HelperText>
-                Name should contain atleast 3 character.
-              </FormControl.HelperText>}
+            {/* 유효성 isInvalid={'name' in errors} */}
+            <FormControl isRequired >
+              <Input placeholder="local-parts@domain" type="email" onChangeText={value => {
+                setData({
+                  ...formData,
+                  name: value
+                });
+                validate()
+              }} />
+
+              {'name' in errors ? <FormControl.ErrorMessage>Error</FormControl.ErrorMessage> : <FormControl.HelperText></FormControl.HelperText>}
             </FormControl>
-            <FormControl.ErrorMessage _text={{
+            {/* <FormControl.ErrorMessage _text={{
               fontSize: 'xs'
             }}>
               Error Name
-            </FormControl.ErrorMessage>
+            </FormControl.ErrorMessage> */}
           </FormControl>
 
 
           <FormControl>
             <FormControl.Label>Password</FormControl.Label>
-            <Input type="password" />
-            {/* <Link _text={{
-            fontSize: "xs",
-            fontWeight: "500",
-            color: "indigo.500"
-          }} alignSelf="flex-end" mt="1">
-              Forget Password?
-            </Link> */}
+            <Input type="password" placeholder="your password" onChangeText={value => {
+              setData({
+                ...formData,
+                password: value
+              });
+              validate()
+            }} />
           </FormControl>
-
-
-
-          {/* 영기 온프레스 수정당한 부분 */}
-          <Button mt="2" colorScheme="indigo" onPress={onSubmit}>
-            {/* onPress={() => navigation.navigate("./tap/bottomBar")} */}
+          <Button mt="2" colorScheme="indigo" onPress={() => { 
+            onSubmit(); 
+            handleLogin(); 
+            }}>
             Sign in
           </Button>
           <HStack mt="6" justifyContent="center">
-            {/* <Text fontSize="sm" color="coolGray.600" _dark={{
-            color: "warmGray.200"
-          }}>
-              I'm a new user.{" "}
-            </Text>
-            <Link _text={{
-            color: "indigo.500",
-            fontWeight: "medium",
-            fontSize: "sm"
-          }} href="#">
-              Sign Up
-            </Link> */}
           </HStack>
         </VStack>
       </Box>
@@ -204,6 +211,7 @@ export default function AuthTab() {
         title={"Sign In With Google"}
         button={true}
         type={"google"}
+        style={{width: 254}}
         onPress={() => loginWithGoogle(firebaseConfig)}
       ></SocialIcon>
     </Center>;

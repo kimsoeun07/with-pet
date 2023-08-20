@@ -1,5 +1,6 @@
 // Image.js
 import React from "react";
+import { View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Container, Button, Image, Avatar, Text, Center } from "native-base";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -20,26 +21,42 @@ const CustomImage = ({ url, onChangePhoto }) => {
   };
 
   return (
-    <Container style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
-      {/* Display the selected image or the default gray avatar */}
-      {url ? (
-        <Avatar
-          source={{ uri: url }}
-          style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20}}
-        />
-      ) : (
-        <Avatar
-          source={require('./img/default_profile.png')}
-          style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20}}
-        />
-      )}
+<Container style={{ flex: 1, justifyContent: "center", alignItems: "center"}}>
+  <View style={{ position: "relative" }}>
+    {/* Display the selected image or the default gray avatar */}
+    {url ? (
+      <Avatar
+        source={{ uri: url }}
+        style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20}}
+      />
+    ) : (
+      <Avatar
+        source={require('./img/default_profile.png')}
+        style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20}}
+      />
+    )}
 
-      {/* Button to choose a photo */}
-      <Button onPress={handlePhotoBtnPress} style={{ alignSelf: 'center', marginTop: 20, borderRadius: 75 }}>
-        {/* <Text>Choose Photo</Text> */}
-        <Icon name="camera-alt" style={{ fontSize: 20, textAlign: "center" }}></Icon>
-      </Button>
-    </Container>
+    {/* Button to choose a photo */}
+    <Button
+      onPress={handlePhotoBtnPress}
+      style={{
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        justifyContent: "center",
+      }}
+    >
+      <Icon
+        name="camera-alt"
+        style={{ fontSize: 20, textAlign: "center", position: "sticky" }}
+      />
+    </Button>
+  </View>
+</Container>
+
   );
 };
 
