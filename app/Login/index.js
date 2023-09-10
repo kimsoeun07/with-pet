@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { FirebaseError, getApps, initializeApp } from "firebase/app";
 import "firebase/auth";
 // import { View, Button, Text, TextInput, StyleSheet } from "react-native";
-import { GoogleAuthProvider, browserSessionPersistence, getAuth, onAuthStateChanged, setPersistence, signInWithPopup } from "firebase/auth";
+import {
+  GoogleAuthProvider, browserSessionPersistence, getAuth,
+  onAuthStateChanged, setPersistence, signInWithPopup, signInWithEmailAndPassword
+} from "firebase/auth";
 import { SocialIcon } from 'react-native-elements'
-import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider } from "native-base";
+import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider, Label } from "native-base";
+
 import { useNavigation } from '@react-navigation/native';
+
 
 
 
@@ -13,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
   authDomain: "test-aae13.firebaseapp.com",
+  databaseURL: "https://test-aae13-default-rtdb.firebaseio.com",
   projectId: "test-aae13",
   storageBucket: "test-aae13.appspot.com",
   messagingSenderId: "798180387857",
@@ -48,12 +54,7 @@ const loginWithGoogle = async (firebaseConfig) => {
     const user = result.user;
     console.log(user);
 
-
-    //여기가 방금 추가한 부분!!
     navigation.navigate("./tap/bottomBar");
-
-
-
 
     return { token, user }
 
@@ -76,15 +77,30 @@ const loginWithGoogle = async (firebaseConfig) => {
 }
 
 export default function AuthTab() {
+
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (firebaseConfig) => {
+
     try {
       // Firebase 인증 메서드 호출
-      await loginWithEmailAndPassword(email, password);
+      // await loginWithEmailAndPassword(email, password);
+      // alert("로그인 성공!");
+      if (!email || !password) {
+        throw new Error('이메일과 비밀번호를 입력해주세요.');
+      }
+
+      const auth = getAuth(); // auth 변수 초기화
+
+      await signInWithEmailAndPassword(auth, email, password);
       alert("로그인 성공!");
+
+      // navigation.navigate("../tap/bottomBar");
+
     } catch (error) {
       // 로그인 실패 시 에러 메시지 출력
       setErrorMessage(error.message);
@@ -96,18 +112,20 @@ export default function AuthTab() {
       initializeApp(firebaseConfig);
       //앱이 없어서 하나 만듦
     }
-    const auth = getAuth();
-    //Auth정보 받아옴
-    const un = onAuthStateChanged(auth, user => {
-      //어쓰의 상태가 바뀔 때(= 바뀔 때 마다 user함수가 실행 됨)
-      curUser = user;
-    });
+
+      const auth = getAuth();
+      //Auth정보 받아옴
+      const un = onAuthStateChanged(auth, user => {
+        //어쓰의 상태가 바뀔 때(= 바뀔 때 마다 user함수가 실행 됨)
+        curUser = user;
+      });
+
     return () => {
       un();
       //이 페이지가 닫아졌을 때 위 어쓰체인지는 계속 관찰하고 있기 때문에 
       //이 함수는 이 페이지가 닫아졌을 때 실행되는 코드이므로 어쓰체인지드 함수를 멈추는 코드임.
     }
-  }, []);
+  },[]);
 
   //로그인 디자인 nativebase
   const Example = () => {
@@ -143,9 +161,12 @@ export default function AuthTab() {
 
     const onSubmit = () => {
       if (validate()) {
-        navigation.navigate("./tap/bottomBar");
+        handleLogin();
+        alert('로그인 성공')
+        // navigation.navigate("../tap/bottomBar");
       } else {
         alert('아이디 또는 비밀번호가 잘못되었습니다.')
+        console.log(errors)
       }
     };
 
@@ -157,24 +178,28 @@ export default function AuthTab() {
         }}>
           WithPet 로그인
         </Heading>
-        <Heading mt="1" _dark={{
+        {/* <Heading mt="1" _dark={{
           color: "warmGray.200"
         }} color="coolGray.600" fontWeight="medium" size="xs">
           계정이 없어도 로그인이 가능합니다
-        </Heading>
+        </Heading> */}
 
         <VStack space={3} mt="5">
           <FormControl>
-            <FormControl.Label>Email ID</FormControl.Label>
+            <Text>Email ID</Text>
 
             {/* 유효성 isInvalid={'name' in errors} */}
             <FormControl isRequired >
               <Input placeholder="local-parts@domain" type="email" onChangeText={value => {
-                setData({
-                  ...formData,
-                  name: value
-                });
-                validate()
+                try {
+                  setData({
+                    ...formData,
+                    name: value
+                  });
+                  validate();
+                } catch (error) {
+                  console.error(error);
+                }
               }} />
 
               {'name' in errors ? <FormControl.ErrorMessage>Error</FormControl.ErrorMessage> : <FormControl.HelperText></FormControl.HelperText>}
@@ -188,19 +213,30 @@ export default function AuthTab() {
 
 
           <FormControl>
-            <FormControl.Label>Password</FormControl.Label>
+            <Text>Password</Text>
             <Input type="password" placeholder="your password" onChangeText={value => {
-              setData({
-                ...formData,
-                password: value
-              });
-              validate()
+              try {
+                setData({
+                  ...formData,
+                  password: value
+                });
+                validate();
+              } catch (error) {
+                console.error(error);
+              }
             }} />
           </FormControl>
-          <Button mt="2" colorScheme="indigo" onPress={() => { 
-            onSubmit(); 
-            handleLogin(); 
-            }}>
+          <Link _text={{
+            fontSize: "xs",
+            fontWeight: "500",
+            color: "indigo.500"
+          }} alignSelf="flex-end" mt="1"
+          href="Login/signUP">
+              회원가입하기
+            </Link>
+          <Button mt="2" colorScheme="indigo" onPress={() => {
+            onSubmit();
+          }}>
             Sign in
           </Button>
           <HStack mt="6" justifyContent="center">
@@ -211,7 +247,7 @@ export default function AuthTab() {
         title={"Sign In With Google"}
         button={true}
         type={"google"}
-        style={{width: 254}}
+        style={{ width: 254 }}
         onPress={() => loginWithGoogle(firebaseConfig)}
       ></SocialIcon>
     </Center>;
@@ -222,6 +258,7 @@ export default function AuthTab() {
       <NativeBaseProvider>
         <Center flex={1} px="3">
           <Example />
+          <Text>{errorMessage}</Text>
         </Center>
       </NativeBaseProvider>
     </>
