@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { FirebaseError, getApps, initializeApp } from "firebase/app";
-import "firebase/auth";
-// import { View, Button, Text, TextInput, StyleSheet } from "react-native";
+import React, { useState } from "react";
 import {
-  GoogleAuthProvider, browserSessionPersistence, getAuth,
-  onAuthStateChanged, setPersistence, signInWithPopup, signInWithEmailAndPassword
-} from "firebase/auth";
+  KeyboardAvoidingView, StyleSheet,
+  Text, TextInput, TouchableOpacity, View
+} from "react-native";
+// import { auth } from "../../firebase";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+import { initializeApp, getApps } from 'firebase/app';
 import { SocialIcon } from 'react-native-elements'
-import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack, Center, NativeBaseProvider, Label } from "native-base";
-
-import { useNavigation } from '@react-navigation/native';
-
-
-
 
 // Firebase 프로젝트의 구성 정보
 const firebaseConfig = {
@@ -25,242 +20,198 @@ const firebaseConfig = {
   appId: "1:798180387857:web:5cb93874eb94fa4d7915b0"
 };
 
-/**
- * 
- * @param {import("firebase/app").FirebaseOptions} firebaseConfig 
- * @returns 
- */
-const loginWithGoogle = async (firebaseConfig) => {
-  //파이어베이스 받아오고
-  if (getApps().length === 0) {
-    initializeApp(firebaseConfig);
-  }
-  const provider = new GoogleAuthProvider();
-  // google대신 다른것으로 할 수도 있음.
-  const auth = getAuth();
-  provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-  // google api scope 에서 people api들어가서 주소 바꿔서 다른 정보를 받아올 수도 있음.
-
-  // try catch는 에러를 잡는 구문
-  try {
-    await setPersistence(auth, browserSessionPersistence);
-    // 브라우저에 내 로그인 정보 기록
-    const result = await signInWithPopup(auth, provider);
-    // 어떻게 뜰지를 말하는 건데 popup이니까 팝업
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    // 해석을 해주는 거
-    const token = credential?.accessToken;
-    // 그 해석 result에서 토큰이랑 유저 받아오는 것
-    const user = result.user;
-    console.log(user);
-
-    navigation.navigate("./tap/bottomBar");
-
-    return { token, user }
-
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      //파이어베이스 오류인 경우
-      const code = error.code;
-      const message = error.message;
-      // The email of the user's account used.
-      const email = error.customData?.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      console.log({
-        code, message, email, credential
-      });
-    } else {
-      console.log(error);
-    }
-  }
+// Firebase 앱을 초기화
+// const app = initializeApp(firebaseConfig);
+if (getApps().length === 0) {
+  initializeApp(firebaseConfig);
 }
 
-export default function AuthTab() {
-
-  const navigation = useNavigation();
-
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = async (firebaseConfig) => {
-
-    try {
-      // Firebase 인증 메서드 호출
-      // await loginWithEmailAndPassword(email, password);
-      // alert("로그인 성공!");
-      if (!email || !password) {
-        throw new Error('이메일과 비밀번호를 입력해주세요.');
-      }
-
-      const auth = getAuth(); // auth 변수 초기화
-
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("로그인 성공!");
-
-      // navigation.navigate("../tap/bottomBar");
-
-    } catch (error) {
-      // 로그인 실패 시 에러 메시지 출력
-      setErrorMessage(error.message);
-    }
-  };
-
-  useEffect(() => {
+  const loginWithGoogle = async () => {
+    //파이어베이스 받아오고
     if (getApps().length === 0) {
       initializeApp(firebaseConfig);
-      //앱이 없어서 하나 만듦
     }
+    const provider = new GoogleAuthProvider();
+    // google대신 다른것으로 할 수도 있음.
+    const auth = getAuth();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    // google api scope 에서 people api들어가서 주소 바꿔서 다른 정보를 받아올 수도 있음.
 
-      const auth = getAuth();
-      //Auth정보 받아옴
-      const un = onAuthStateChanged(auth, user => {
-        //어쓰의 상태가 바뀔 때(= 바뀔 때 마다 user함수가 실행 됨)
-        curUser = user;
-      });
+    // try catch는 에러를 잡는 구문
+    try {
+      await setPersistence(auth, browserSessionPersistence);
+      // 브라우저에 내 로그인 정보 기록
+      const result = await signInWithPopup(auth, provider);
+      // 어떻게 뜰지를 말하는 건데 popup이니까 팝업
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      // 해석을 해주는 거
+      const token = credential?.accessToken;
+      // 그 해석 result에서 토큰이랑 유저 받아오는 것
+      const user = result.user;
+      console.log(user);
 
-    return () => {
-      un();
-      //이 페이지가 닫아졌을 때 위 어쓰체인지는 계속 관찰하고 있기 때문에 
-      //이 함수는 이 페이지가 닫아졌을 때 실행되는 코드이므로 어쓰체인지드 함수를 멈추는 코드임.
-    }
-  },[]);
+      navigation.navigate("./tap/bottomBar");
 
-  //로그인 디자인 nativebase
-  const Example = () => {
+      return { token, user }
 
-    // 유효성 검사 디자인
-    const [formData, setData] = React.useState({});
-    const [errors, setErrors] = React.useState({});
-
-    const validate = () => {
-      if (formData.name === undefined) {
-        setErrors({
-          ...errors,
-          name: 'email을 입력해 주세요'
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        //파이어베이스 오류인 경우
+        const code = error.code;
+        const message = error.message;
+        // The email of the user's account used.
+        const email = error.customData?.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log({
+          code, message, email, credential
         });
-        return false;
-      } else if (!formData.name.includes('@')) {
-        setErrors({
-          ...errors,
-          name: '제대로 된 이메일을 입력해 주세요'
-        });
-        return false;
-      } else if (formData.password === undefined) {
-        setErrors({
-          ...errors,
-          name: 'password를 입력해 주세요'
-        });
-        return false;
-      }
-
-      return true;
-    };
-
-
-    const onSubmit = () => {
-      if (validate()) {
-        handleLogin();
-        alert('로그인 성공')
-        // navigation.navigate("../tap/bottomBar");
       } else {
-        alert('아이디 또는 비밀번호가 잘못되었습니다.')
-        console.log(errors)
+        console.log(error);
       }
-    };
+    }
+  }
 
 
-    return <Center w="100%">
-      <Box safeArea p="2" py="8" w="90%" maxW="290">
-        <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
-          color: "warmGray.50"
-        }}>
-          WithPet 로그인
-        </Heading>
-        {/* <Heading mt="1" _dark={{
-          color: "warmGray.200"
-        }} color="coolGray.600" fontWeight="medium" size="xs">
-          계정이 없어도 로그인이 가능합니다
-        </Heading> */}
+  const handleSignUp = () => {
 
-        <VStack space={3} mt="5">
-          <FormControl>
-            <Text>Email ID</Text>
+    const auth = getAuth(); // Firebase Authentication 인스턴스 가져오기
 
-            {/* 유효성 isInvalid={'name' in errors} */}
-            <FormControl isRequired >
-              <Input placeholder="local-parts@domain" type="email" onChangeText={value => {
-                try {
-                  setData({
-                    ...formData,
-                    name: value
-                  });
-                  validate();
-                } catch (error) {
-                  console.error(error);
-                }
-              }} />
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredentials => {
+        const user = userCredentials.user;
+        console.log(user.email);
+        navigation.navigate("./tap/bottomBar");
+      })
+      .catch(error => alert(error.message));
+  }
 
-              {'name' in errors ? <FormControl.ErrorMessage>Error</FormControl.ErrorMessage> : <FormControl.HelperText></FormControl.HelperText>}
-            </FormControl>
-            {/* <FormControl.ErrorMessage _text={{
-              fontSize: 'xs'
-            }}>
-              Error Name
-            </FormControl.ErrorMessage> */}
-          </FormControl>
+  const handleLogin = () => {
+    const auth = getAuth(); // Firebase Authentication 인스턴스 가져오기
 
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredentials => {
+        const user = userCredentials.user;
+        console.log(`${user.email}으로 로그인 됨`);
+        navigation.navigate("./tap/bottomBar");
+      })
+      .catch(error => alert(error.message));
+  }
 
-          <FormControl>
-            <Text>Password</Text>
-            <Input type="password" placeholder="your password" onChangeText={value => {
-              try {
-                setData({
-                  ...formData,
-                  password: value
-                });
-                validate();
-              } catch (error) {
-                console.error(error);
-              }
-            }} />
-          </FormControl>
-          <Link _text={{
-            fontSize: "xs",
-            fontWeight: "500",
-            color: "indigo.500"
-          }} alignSelf="flex-end" mt="1"
-          href="Login/signUP">
-              회원가입하기
-            </Link>
-          <Button mt="2" colorScheme="indigo" onPress={() => {
-            onSubmit();
-          }}>
-            Sign in
-          </Button>
-          <HStack mt="6" justifyContent="center">
-          </HStack>
-        </VStack>
-      </Box>
-      <SocialIcon
-        title={"Sign In With Google"}
-        button={true}
-        type={"google"}
-        style={{ width: 254 }}
-        onPress={() => loginWithGoogle(firebaseConfig)}
-      ></SocialIcon>
-    </Center>;
-  };
 
   return (
-    <>
-      <NativeBaseProvider>
-        <Center flex={1} px="3">
-          <Example />
-          <Text>{errorMessage}</Text>
-        </Center>
-      </NativeBaseProvider>
-    </>
-  );
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding">
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.subject}>with-pet</Text>
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+          style={styles.input}
+        >
+        </TextInput>
+        <TextInput
+          placeholder="password"
+          value={password}
+          onChangeText={text => setPassword(text)}
+          style={styles.input}
+          secureTextEntry
+        >
+        </TextInput>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={handleLogin}
+            style={styles.button}>
+            <Text style={styles.buttonText}>로그인</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleSignUp}
+            style={[styles.button, styles.buttonOutline]}>
+            <Text style={styles.buttonOutlineText}>회원가입</Text>
+          </TouchableOpacity>
+
+          <SocialIcon
+            title={"Sign In With Google"}
+            button={true}
+            type={"google"}
+            style={styles.icon}
+            onPress={() => loginWithGoogle(firebaseConfig)}
+          ></SocialIcon>
+        </View>
+
+
+      </View>
+    </KeyboardAvoidingView>
+  )
 }
+
+export default LoginScreen
+
+const styles = StyleSheet.create({
+  subject: {
+    fontSize: 30,
+    fontWeight: "500",
+    color: '#2bc1c8',//#2dd4bf
+    fontFamily: 'Jockey One',
+    margin: 15
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  inputContainer: {
+    width: '80%'
+  },
+  input: {
+    backgroundColor: '#dbeded', //'white'
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 5,
+  },
+  button: {
+    backgroundColor: '#0782F9',
+    width: '60%',
+    padding: 15,
+    borderRadius: 10
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40
+  },
+  buttonOutline: {
+    backgroundColor: 'white',
+    marginTop: 5,
+    borderColor: '#0782F9',
+    borderWidth: 2,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  buttonOutlineText: {
+    color: '#0782F9',
+    fontWeight: '700',
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  icon: {
+    width: '60%',
+    padding: 15,
+    backgroundColor: '#0978b4',// #77767c / #e2e2e2 / #0978b4
+    marginTop: 30
+  }
+})
