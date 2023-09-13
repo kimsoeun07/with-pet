@@ -1,14 +1,31 @@
 import React, { useState } from "react";
-import {
-  Select,
-  Box,
-  CheckIcon,
-  NativeBaseProvider,
-} from "native-base";
+import {Select,Box,CheckIcon,NativeBaseProvider} from "native-base";
 import { Text } from "react-native";
+import { MongoClient } from 'mongodb';
 
-const Example = () => {
+const Example = async () => {
   const [selectedOption, setSelectedOption] = useState("");
+
+  const uri = 'mongodb+srv://ksoeun6204:hG5CM4TzUpDrAbXU@cluster0.1jfdc5b.mongodb.net/petmap';
+  const client = new MongoClient(uri);
+  const database = client.db('petmap');
+  const collection = database.collection('petdata');
+
+  try {
+    await client.connect();
+    console.log('MongoDB에 연결되었습니다.');
+
+    const query={
+      "Username":"user2"
+    }    
+    const result = await collection.find(query).toArray();
+    console.log(result)
+
+
+} catch (error) {
+    console.error('데이터 조회 중 오류가 발생했습니다.', error);
+    return json({ error: 'Internal Server Error' }, 500);
+}
 
   function SearchScreen() {
     return <Text>Search</Text>;
