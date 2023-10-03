@@ -2,77 +2,138 @@ import React, { useState, useEffect } from "react";
 import Image from "./Image";
 import { TextArea, Box, NativeBaseProvider, Radio, Text, Flex, View } from "native-base";
 import { Button } from "react-native";
+// import { MongoClient } from 'mongodb';
 
+// const uri = 'mongodb+srv://ksoeun6204:hG5CM4TzUpDrAbXU@cluster0.1jfdc5b.mongodb.net/petmap';
+// const client = new MongoClient(uri);
 
 const plusPetScreen = () => {
+
+  // const database = client.db('petmap');
+  // const collection = database.collection('petdata');
 
   const [photo, setPhoto] = useState(undefined);
   const [value, setValue] = React.useState("one");
   const [name, setName] = useState('');
   const [birth, setBirth] = useState('');
 
-  return (
-    <NativeBaseProvider>
-      {/*  */}
-      {/* <View style={{ bg: "white", padding: 10, flexDirection: "row" }}>
+  // const upload = async () => {
+
+  //   try {
+  //     await client.connect();
+
+  //     const collection = client.db('petmap').collection('petdata');
+      
+  //     await collection.insert(
+  //       {
+  //         "name": name,
+  //         "birthday": birth,
+  //         "kind": value
+  //       }
+  //     )
+  //   } finally {
+  //     await client.close();
+  //   }
+    
+  // }
+
+    // express모듈과의 연결을 시도한 코드
+    const uploadToServer = async () => {
+      try {
+        // 서버 엔드포인트 URL 설정 (Express.js 서버 주소)
+        const serverUrl = "http://localhost:3000/api/users/add"; // 적절한 엔드포인트 URL로 변경
+  
+        // 서버로 보낼 데이터 객체 생성
+        const data = {
+          name: name,
+          birthday: birth,
+          kind: value,
+        };
+  
+        // 서버로 POST 요청 보내기
+        const response = await fetch(serverUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (response.ok) {
+          // 서버에서 응답이 성공적으로 왔을 때 처리
+          console.log("데이터 업로드 성공");
+        } else {
+          // 서버에서 응답이 실패했을 때 처리
+          console.error("데이터 업로드 실패");
+        }
+      } catch (error) {
+        console.error("데이터 업로드 중 오류 발생:", error);
+      }
+    };
+    //여기까지
+
+return (
+  <NativeBaseProvider>
+    {/*  */}
+    {/* <View style={{ bg: "white", padding: 10, flexDirection: "row" }}>
         <Text style={{ fontWeight: "bold", fontSize: 17 }} onPress={() => navigation.navigate("../bottomBar")}>&lt;</Text>
         <Text style={{ fontWeight: "bold", fontSize: 17, textAlign: "center", width: "100%" }}>반려동물 정보 입력</Text>
       </View> */}
-      <View style={{ justifyContent: "center", alignItems: "center", width: "100%", marginBottom: 10 }}>
-        {/* <Image url={photo} onChangePhoto={setPhoto} /> */}
-        <Image source={{ uri: photo }} style={{ width: 200, height: 200 }} />
-      </View>
+    <View style={{ justifyContent: "center", alignItems: "center", width: "100%", marginBottom: 10 }}>
+      {/* <Image url={photo} onChangePhoto={setPhoto} /> */}
+      <Image source={{ uri: photo }} style={{ width: 200, height: 200 }} />
+    </View>
 
-      <Flex justifyContent="center" alignItems="center" margin={5}>
-        <Radio.Group
-          name="myRadioGroup"
-          accessibilityLabel="favorite number"
-          value={value}
-          onChange={(nextValue) => {
-            setValue(nextValue);
-          }}
-        >
-          <Flex direction="row" alignItems="center" justifyContent="center">
-            <Radio value="one" my={1} mx={2}>
-              dog
-            </Radio>
-            <Radio value="two" my={1} mx={2}>
-              cat
-            </Radio>
-          </Flex>
-        </Radio.Group>
+    <Flex justifyContent="center" alignItems="center" margin={5}>
+      <Radio.Group
+        name="myRadioGroup"
+        accessibilityLabel="favorite number"
+        value={value}
+        onChange={(nextValue) => {
+          setValue(nextValue);
+        }}
+      >
+        <Flex direction="row" alignItems="center" justifyContent="center">
+          <Radio value="one" my={1} mx={2}>
+            dog
+          </Radio>
+          <Radio value="two" my={1} mx={2}>
+            cat
+          </Radio>
+        </Flex>
+      </Radio.Group>
+    </Flex>
+
+    <Box w="100%" mt={4} paddingLeft={5} >
+      {/* alignItems="center"  */}
+      <Flex direction="row" alignItems="center">
+        <Text style={{ margin: 10, left: 0, width: 75 }}>이름</Text>
+        <TextArea h={10} placeholder="반려동물 이름" w="65%" maxW="300" onChangeText={value => { setName(value)}} />
       </Flex>
-
-      <Box w="100%" mt={4} paddingLeft={5} >
-        {/* alignItems="center"  */}
-        <Flex direction="row" alignItems="center">
-          <Text style={{ margin: 10, left: 0, width: 75 }}>이름</Text>
-          <TextArea h={10} placeholder="반려동물 이름" w="65%" maxW="300" onChangeText={value => {setName(value); console.log(name)} }/>
-        </Flex>
-        <br />
-        <Flex direction="row" alignItems="center">
-          <Text style={{ margin: 10, width: 75 }}>생년월일</Text>
-          <TextArea h={10} placeholder="2008-07-02의 형식으로 적어주세요" w="65%" maxW="300" onChangeText={value => {setBirth(value); console.log(birth)}}/>
-        </Flex>
-      </Box>
+      <br />
+      <Flex direction="row" alignItems="center">
+        <Text style={{ margin: 10, width: 75 }}>생년월일</Text>
+        <TextArea h={10} placeholder="2008-07-02의 형식으로 적어주세요" w="65%" maxW="300" onChangeText={value => { setBirth(value)}} />
+      </Flex>
+    </Box>
 
 
-      <Box style={{ marginTop: 30, width: "100%", alignItems: "center" }} class="bg-Teal-500">
-        <Button
-          onPress={() => navigation.navigate("../tap/bottomBar")}//() => navigation.navigate("../bottomBar")
-          buttonStyle={{
-            height: 30,
-            justifyContent: 'center',
-            width: '100%',
-            backgroundColor: 'teal',
-          }}
-          // class= "bg-Teal-500"
-          title="입력 완료"
-        />
-      </Box>
+    <Box style={{ marginTop: 30, width: "100%", alignItems: "center" }} class="bg-Teal-500">
+      <Button
+        onPress={uploadToServer} //() => navigation.navigate("../bottomBar")() => navigation.navigate("../tap/bottomBar")
+        buttonStyle={{
+          height: 30,
+          justifyContent: 'center',
+          width: '100%',
+          backgroundColor: 'teal',
+        }}
+        // class= "bg-Teal-500"
+        title="입력 완료"
+      />
+    </Box>
 
-    </NativeBaseProvider>
-  );
+  </NativeBaseProvider>
+);
 };
 
 export default plusPetScreen;

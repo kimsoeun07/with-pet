@@ -4,11 +4,11 @@ import {
   Text, TextInput, TouchableOpacity, View
 } from "react-native";
 // import { auth } from "../../firebase";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
-import { initializeApp, getApps } from 'firebase/app';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, 
+  GoogleAuthProvider, setPersistence, browserSessionPersistence, signInWithPopup } from "firebase/auth";
+import { initializeApp, getApps, FirebaseError } from 'firebase/app';
+// import {  }
 import { SocialIcon } from 'react-native-elements'
-
 // Firebase 프로젝트의 구성 정보
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
