@@ -4,7 +4,6 @@ import {View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Note from './Note';
 import user from './user';
-import notification from './notification';
 import walk from './walk';
 
 const Tab = createMaterialBottomTabNavigator();
@@ -28,7 +27,7 @@ function MainScreen() {
           //home
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Notification"
         component={notification}
         options={{
@@ -37,7 +36,7 @@ function MainScreen() {
             <Icon name="notifications" color={color} size={24} />
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Note"
         component={Note}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { NativeBaseProvider, Fab, Icon, Box, Center, Button, Modal, FormControl, Input, AlertDialog } from "native-base";
+import { NativeBaseProvider, Fab, Icon, Box, Center, Button, Modal, FormControl, Input, AlertDialog, Image } from "native-base";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import {
   getAuth,
@@ -15,6 +15,7 @@ import {
 } from 'firebase/app';
 // import LoginScreen from '../../Login';
 import { useNavigation } from '@react-navigation/native';
+import { Dimensions } from 'react-native';
 
 
 const firebaseConfig = {
@@ -32,6 +33,10 @@ if (!getApps().length) {
   initializeApp(firebaseConfig);
 }
 
+{/* 1. 현재 아이디 가져오기
+2. fetch로 현재 아이디와 사용자 아이디가 같은 동물 데이터 받아오기
+3. 동물 데이터 속 이름, 생년월일, 종류, 프로필 사진(이 부분 오류)를 가져와서 프로필 카드 생성.  */}
+
 /**
  * 
  * @param {import("firebase/app").FirebaseOptions} firebaseConfig 
@@ -46,12 +51,15 @@ export default function Page() {
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
+  const onModalcancle = () => setShowModal(false)
   const cancelRef = React.useRef(null);
+  const [userID, setUserID] = useState('');
+  const [data, setData] = useState([]);
+  const [data_id, setData_id] = useState('')
 
   const logout = async () => {
     const auth = getAuth();
     await auth.signOut();
-    // console.log('로그아웃 됨')
   };
 
   // 로그아웃 확인하기
@@ -61,18 +69,67 @@ export default function Page() {
       if (!user) {
         console.log("로그아웃 상태입니다.");
         navigation.navigate('Login');
+        setUserID(ull)
       } else {
         console.log("현재 로그인된 구글 이메일 주소: ", user.email);
+        setUserID(user.email)
       }
     });
   }
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!userID) return; // userID 값이 없으면 API 요청 건너뛰기
+        const response = await fetch(`http://localhost:5000/api/Pet?userID=${userID}`);
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [userID]);
+
+  useEffect(() => {
     const unsubscribe = onAuthChangedListener();
     return () => {
-      unsubscribe();
+      // unsubscribe();
+      if (typeof unsubscribe === "function") { // 구독 취소 가능한지 확인
+        unsubscribe(); // 클린업 시에 구독 취소
+      }
     };
   }, [navigation]);
+
+  const Petdelete = () => {
+    // 해당 pet데이터 삭제
+    // _id를 전달 , 같은 데이터를 삭제하도록 하자.
+    console.log(`id = ${data_id}`)
+
+    fetch('http://localhost:5000/api/Petdelete', {
+      method: 'DELETE', // DELETE 메서드 사용
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ _id: data_id })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message); // 삭제 결과 메시지 출력
+        setShowModal(false); // 모달 닫기
+        setData(data.filter(item => item._id !== data_id));
+      })
+      .catch(error => console.error('Error:', error));
+    // .then(response => response.json())
+    // .then(data => {
+    //   console.log(data);
+    //   setShowModal(false); // 모달 닫기
+    //   setData(data.filter(item => item._id !== data_id)); // 삭제된 항목 제외하고 상태 업데이트
+    // })
+
+
+  }
+
+  const windowHeight = Dimensions.get('window').height;
+const iconBottomPosition = windowHeight * 0.25;
 
   //여기 까지
 
@@ -110,54 +167,24 @@ export default function Page() {
 
         </View>
 
-        <View style={{ padding: 10 }}>
-          <Center>
-            <Box height="200" w={[300, 300, 400]} padding="3" shadow="2" rounded="lg" _dark={{
-              bg: "coolGray.200:alpha.20"
-            }} _light={{
-              bg: "coolGray.200:alpha.20"
-            }} flexDirection="row">
-              <View style={styles.img}>
-                <Text>프로필 사진</Text>
-              </View>
-              <Text style={{ marginLeft: 20, fontWeight: "bold", fontSize: 15 }}>{'\n'}이-름{'\n\n'}생일</Text>
-              <Fab onPress={() => setShowModal(true)} renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
+        {/* 여기 부터 */}
+        <View style={{flexDirection:"row"}}>
 
-              <Center>
-                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-                  <Modal.Content maxWidth="400px">
-                    <Modal.CloseButton />
-                    <Modal.Header>반려동물 정보 수정</Modal.Header>
-                    <Modal.Body>
-                      <FormControl>
-                        <FormControl.Label>이름</FormControl.Label>
-                        <Input />
-                      </FormControl>
-                      <FormControl mt="3">
-                        <FormControl.Label>생일</FormControl.Label>
-                        <Input />
-                      </FormControl>
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button.Group space={2}>
-                        <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                          setShowModal(false);
-                        }}>
-                          Cancel
-                        </Button>
-                        <Button onPress={() => {
-                          setShowModal(false);
-                        }}>
-                          Save
-                        </Button>
-                      </Button.Group>
-                    </Modal.Footer>
-                  </Modal.Content>
-                </Modal>
-              </Center>
-            </Box>
-          </Center>
+        <View style={{
+          maxHeight: '80%', // 최대 높이를 화면 높이의 30%로 설정
+          overflowY: 'auto'
+        }} >
+          {data.map((result, index) => (
+            <View key={index} style={{ margin: 10, backgroundColor: 'white', borderRadius: 10, padding: 10, width: 300, height: 200, flexDirection: "row", justifyContent: "center" }}>
+
+              <Image source={{ uri: result.imageURL }} style={styles.img} alt="잘못된 이미지" />
+              <Text style={{ marginLeft: 20, fontWeight: "bold", fontSize: 15 }}>{'\n'}{result.name}{'\n\n'}{result.birthday}</Text>
+              <Fab onPress={() => { setData_id(result._id); setShowModal(true) }} renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="delete" size="sm" />} />
+            </View>
+          ))
+          }
         </View>
+        {/* 여기 까지 */}
         <Icon
           as={AntDesign}
           name="pluscircleo"
@@ -166,12 +193,43 @@ export default function Page() {
             fontWeight: "bold",
             color: "black",
             position: "absolute",
-            bottom: -450,
+            bottom: iconBottomPosition,
+            // bottom: -150,
             right: 20
           }}
-        //   onPress={() => navigation.navigate("")}
-        onPress={() => navigation.navigate('반려동물 정보입력')}
+          //   onPress={() => navigation.navigate("")}
+          onPress={() => navigation.navigate('반려동물 정보입력')}
         />
+
+
+        </View>
+
+        <View style={{ padding: 10 }}>
+          <Center>
+            <Center>
+              <AlertDialog leastDestructiveRef={cancelRef} isOpen={showModal} onClose={onModalcancle}>
+                <AlertDialog.Content>
+                  <AlertDialog.CloseButton />
+                  <AlertDialog.Header>반려동물 정보 삭제</AlertDialog.Header>
+                  <AlertDialog.Body>
+                    정말 정보를 삭제하시겠습니까?
+                  </AlertDialog.Body>
+                  <AlertDialog.Footer>
+                    <Button.Group space={2}>
+                      <Button variant="unstyled" colorScheme="coolGray" onPress={onModalcancle} ref={cancelRef}>
+                        Cancel
+                      </Button>
+                      <Button colorScheme="danger" onPress={Petdelete}>
+                        Delete
+                      </Button>
+                    </Button.Group>
+                  </AlertDialog.Footer>
+                </AlertDialog.Content>
+              </AlertDialog>
+
+            </Center>
+          </Center>
+        </View>
       </View>
 
     </NativeBaseProvider>
@@ -188,7 +246,7 @@ const styles = StyleSheet.create({
 
   img: {
     display: "flex",
-    width: "40%",
+    width: "50%",
     height: "70%",
     padding: 8,
     flexDirection: "column",
@@ -196,6 +254,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 9.727,
     flexShrink: 0,
-    backgroundColor: "orange"
   }
 })

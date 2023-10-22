@@ -97,7 +97,7 @@ const LoginScreen = () => {
       .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`${user.email}으로 로그인 됨`);
-        navigation.navigate("./tap/bottomBar");
+        navigation.navigate("http://localhost:19000/tap/bottomBar");
       })
       .catch(error => alert(error.message));
   }
