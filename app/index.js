@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 
 export default function Page() {
   return (
+    <>
     <View style={styles.container}>
       <View style={styles.main}>
         <Text style={styles.subtitle}>With Pet</Text>
@@ -11,6 +12,7 @@ export default function Page() {
         <Image source={require('./img/Illustration/Workflow-Teamwork.png')} style={styles.image} />
       </View>
     </View>
+    </>
   );
 }
 

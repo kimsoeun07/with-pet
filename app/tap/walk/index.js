@@ -6,7 +6,7 @@
 
 //   return (
 //     <View style={styles.container}>
-      
+
 //       <View style={styles.imgContainer}>
 //         <Image source={require('./img-walk/Illustration/Animal.png')} style={styles.img} />
 //       </View>
@@ -21,7 +21,7 @@
 //         <Text style={styles.text}>강아지1</Text>
 //       </View>
 
-      
+
 //       <TouchableOpacity style={styles.but}>
 //         <Text style={styles.butText}>산책 시작</Text>
 //       </TouchableOpacity>
@@ -83,14 +83,50 @@
 // });
 
 
-import React from "react";
+import React, { useState } from "react";
 import { WebView } from 'react-native-webview';
+import { getApps, initializeApp, onAuthStateChanged, getAuth } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
+  authDomain: "test-aae13.firebaseapp.com",
+  databaseURL: "https://test-aae13-default-rtdb.firebaseio.com",
+  projectId: "test-aae13",
+  storageBucket: "test-aae13.appspot.com",
+  messagingSenderId: "798180387857",
+  appId: "1:798180387857:web:5cb93874eb94fa4d7915b0"
+};
+
+// firebase.initializeApp(firebaseConfig);
+if (!getApps().length) {
+  initializeApp(firebaseConfig);
+}
 
 export default function App() {
+
+  const [userID, setUserID] = useState('');
+
+  const auth = getAuth();
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      console.log("로그아웃 상태입니다.");
+      setUserID(ull)
+    } else {
+      setUserID(user.email)
+    }
+  });
+
+  const webViewRef = useRef()
+
+  useEffect(() => {
+    webViewRef.current.postMessage(userID);
+  }, [])
+
   return (
     <WebView
-      style={{width: 200, height: 200}}
-      source={{ uri: 'https://localhost:3000/find' }}
+      style={{ width: 200, height: 200 }}
+      source={{ uri: 'https://localhost:3000/walk' }}
+      ref={webViewRef}
     />
   );
 }

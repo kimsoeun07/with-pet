@@ -27,16 +27,7 @@ function MainScreen() {
           //home
         }}
       />
-      {/* <Tab.Screen
-        name="Notification"
-        component={notification}
-        options={{
-          tabBarLabel: '알림',
-          tabBarIcon: ({color}) => (
-            <Icon name="notifications" color={color} size={24} />
-          ),
-        }}
-      /> */}
+
       <Tab.Screen
         name="Note"
         component={Note}

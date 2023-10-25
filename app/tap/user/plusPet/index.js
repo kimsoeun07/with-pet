@@ -31,9 +31,6 @@ if (!getApps().length) {
 
 const PlusPetScreen = () => {
 
-  // const database = client.db('petmap');
-  // const collection = database.collection('petdata');
-
   const [photo, setPhoto] = useState(undefined);
   const [value, setValue] = React.useState("one");
   const [name, setName] = useState('');
@@ -89,21 +86,8 @@ const PlusPetScreen = () => {
       console.error("데이터 업로드 중 오류 발생:", error);
     }
   };
-  //여기까지
-
-  // const handlePhotoChange = (selectedPhotos) => {
-  //   if (selectedPhotos && selectedPhotos.length > 0) {
-  //     const selectedPhoto = selectedPhotos[0];
-  //     const uri = selectedPhoto.uri;
-  //     setPhoto(uri);
-  //     console.log(photo)
-  //   } else {
-  //     console.log("Image selection canceled");
-  //   }
-  // };
 
   const handlePhotoChange = (selectedUri) => {
-    // console.log("Received image URI:", selectedUri); // 받은 이미지의 URI 출력
     setPhoto(selectedUri);
   };
 
@@ -116,9 +100,7 @@ const PlusPetScreen = () => {
         <Text style={{ fontWeight: "bold", fontSize: 17, textAlign: "center", width: "100%" }}>반려동물 정보 입력</Text>
       </View> */}
       <View style={{ justifyContent: "center", alignItems: "center", width: "100%", marginBottom: 10 }}>
-        {/* <Image url={photo} onChangePhoto={setPhoto} /> */}
         <CustomImage  style={{ width: 200, height: 200 }} url={photo} onChangePhoto={handlePhotoChange} />
-        {/* source={{ uri: photo }} */}
       </View>
 
       <Flex justifyContent="center" alignItems="center" margin={5}>
@@ -174,15 +156,3 @@ const PlusPetScreen = () => {
 };
 
 export default PlusPetScreen;
-
-// const petdataModel = mongoose.model('petdata', new mongoose.Schema({
-//   Username: String,
-//   name: String,
-//   birthday: String,
-//   kind: String
-//   lately_inoculation_day: Number
-//   next_inoculation_day: Number
-//   // 스키마 정의
-//   // 여기에 해당 콜렉션의 필드를 정의합니다.
-//   // 예: name, age 등
-// }, { collection: 'petdata' }));

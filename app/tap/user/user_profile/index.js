@@ -118,18 +118,12 @@ export default function Page() {
         setData(data.filter(item => item._id !== data_id));
       })
       .catch(error => console.error('Error:', error));
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log(data);
-    //   setShowModal(false); // 모달 닫기
-    //   setData(data.filter(item => item._id !== data_id)); // 삭제된 항목 제외하고 상태 업데이트
-    // })
 
 
   }
 
   const windowHeight = Dimensions.get('window').height;
-const iconBottomPosition = windowHeight * 0.25;
+  const iconBottomPosition = windowHeight * 0.1;
 
   //여기 까지
 
@@ -168,38 +162,36 @@ const iconBottomPosition = windowHeight * 0.25;
         </View>
 
         {/* 여기 부터 */}
-        <View style={{flexDirection:"row"}}>
+        <View style={{ flexDirection: "row", maxHeight: '100%', // 최대 높이를 화면 높이의 30%로 설정
+            overflowY: 'auto'}}>
 
-        <View style={{
-          maxHeight: '80%', // 최대 높이를 화면 높이의 30%로 설정
-          overflowY: 'auto'
-        }} >
-          {data.map((result, index) => (
-            <View key={index} style={{ margin: 10, backgroundColor: 'white', borderRadius: 10, padding: 10, width: 300, height: 200, flexDirection: "row", justifyContent: "center" }}>
+          <View>
+            {data.map((result, index) => (
+              <View key={index} style={{ margin: 10, backgroundColor: 'white', borderRadius: 10, padding: 10, width: 300, height: 200, flexDirection: "row", justifyContent: "center" }}>
 
-              <Image source={{ uri: result.imageURL }} style={styles.img} alt="잘못된 이미지" />
-              <Text style={{ marginLeft: 20, fontWeight: "bold", fontSize: 15 }}>{'\n'}{result.name}{'\n\n'}{result.birthday}</Text>
-              <Fab onPress={() => { setData_id(result._id); setShowModal(true) }} renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="delete" size="sm" />} />
-            </View>
-          ))
-          }
-        </View>
-        {/* 여기 까지 */}
-        <Icon
-          as={AntDesign}
-          name="pluscircleo"
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            color: "black",
-            position: "absolute",
-            bottom: iconBottomPosition,
-            // bottom: -150,
-            right: 20
-          }}
-          //   onPress={() => navigation.navigate("")}
-          onPress={() => navigation.navigate('반려동물 정보입력')}
-        />
+                <Image source={{ uri: result.imageURL }} style={styles.img} alt="잘못된 이미지" />
+                <Text style={{ marginLeft: 20, fontWeight: "bold", fontSize: 15 }}>{'\n'}{result.name}{'\n\n'}{result.birthday}</Text>
+                <Fab onPress={() => { setData_id(result._id); setShowModal(true) }} renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="delete" size="sm" />} />
+              </View>
+            ))
+            }
+          </View>
+          {/* 여기 까지 */}
+          <Icon
+            as={AntDesign}
+            name="pluscircleo"
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+              color: "black",
+              position: "absolute",
+              bottom: iconBottomPosition,
+              // bottom: -150,
+              right: 20
+            }}
+            //   onPress={() => navigation.navigate("")}
+            onPress={() => navigation.navigate('반려동물 정보입력')}
+          />
 
 
         </View>
