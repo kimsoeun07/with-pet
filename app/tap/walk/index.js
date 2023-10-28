@@ -83,9 +83,11 @@
 // });
 
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { WebView } from 'react-native-webview';
-import { getApps, initializeApp, onAuthStateChanged, getAuth } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Text } from "react-native";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
@@ -104,29 +106,32 @@ if (!getApps().length) {
 
 export default function App() {
 
+    const webViewRef = useRef()
+
   const [userID, setUserID] = useState('');
 
   const auth = getAuth();
   onAuthStateChanged(auth, user => {
     if (!user) {
       console.log("로그아웃 상태입니다.");
-      setUserID(ull)
+      setUserID(null)
     } else {
       setUserID(user.email)
     }
   });
-
-  const webViewRef = useRef()
 
   useEffect(() => {
     webViewRef.current.postMessage(userID);
   }, [])
 
   return (
+    <>
+    <Text>dkjfkdj</Text>
     <WebView
       style={{ width: 200, height: 200 }}
-      source={{ uri: 'https://localhost:3000/walk' }}
+      source={{ uri: 'https://172.30.1.77:3000/walk' }}
       ref={webViewRef}
     />
+    </>
   );
 }

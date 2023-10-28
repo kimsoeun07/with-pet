@@ -60,6 +60,9 @@ export default function Page() {
   const logout = async () => {
     const auth = getAuth();
     await auth.signOut();
+    auth.signOut().then(() => {
+      navigation.navigate('Login');
+    });
   };
 
   // 로그아웃 확인하기
@@ -68,7 +71,7 @@ export default function Page() {
     onAuthStateChanged(auth, user => {
       if (!user) {
         console.log("로그아웃 상태입니다.");
-        navigation.navigate('Login');
+        // navigation.navigate('login');
         setUserID(ull)
       } else {
         console.log("현재 로그인된 구글 이메일 주소: ", user.email);

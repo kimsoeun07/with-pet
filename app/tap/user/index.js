@@ -51,8 +51,6 @@ function MyStack() {
 
 export default function App() {
   return (
-    <NavigationContainer independent={true}>
-      <MyStack />
-    </NavigationContainer>
+    <MyStack />
   );
 }

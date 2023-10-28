@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
 import { Agenda } from 'react-native-calendars';
 import WebView from 'react-native-webview';
-import { getApps, initializeApp, onAuthStateChanged, getAuth } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 // //키보드 부분
-import {
-  Pressable,
-  Keyboard,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback
-} from 'react-native';
-import { isEmptyObj } from "native-base";
+// import {
+//   Pressable,
+//   Keyboard,
+//   KeyboardAvoidingView,
+//   TouchableWithoutFeedback
+// } from 'react-native';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
@@ -33,6 +32,8 @@ if (!getApps().length) {
 
 
 function CalendarView() {
+  const webViewRef = useRef()
+
   const posts = [
     {
       id: 1,
@@ -60,12 +61,13 @@ function CalendarView() {
 
   const [items, setItems] = useState({});
   const [userID, setUserID] = useState('');
+  const [coords, setCoords] = useState([]);
 
   useEffect(() => {
-    const auth = getAuth();
+    const auth = getAuth()
     onAuthStateChanged(auth, user => {
       if (!user) {
-        setUserID(ull)
+        setUserID(null)
       } else {
         setUserID(user.email)
       }
@@ -82,6 +84,8 @@ function CalendarView() {
       // const response = await fetch(`/api/walkmemo?date=${day.dateString}`);
       const data = await response.json();
 
+      setCoords(data.coords)
+
       // // items 객체에 메모 아이템을 저장합니다.
       setItems({
         [day.dateString]: [data],
@@ -95,9 +99,6 @@ function CalendarView() {
 
   const renderItem = (item) => {
     const apikey = 'a0bf728be4ea8a8be3c00464e7c70c98';
-
-    const webViewRef = useRef()
-
     useEffect(() => {
       webViewRef.current.postMessage(coords);
     }, [])

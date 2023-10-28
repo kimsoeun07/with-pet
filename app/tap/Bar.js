@@ -5,10 +5,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Note from './Note';
 import user from './user';
 import walk from './walk';
+import map from './map';
 
 const Tab = createMaterialBottomTabNavigator();
 
-function MainScreen() {
+function bottomBar() {
+  console.log(Note)
   return (
     <Tab.Navigator
       shifting={true}
@@ -19,8 +21,8 @@ function MainScreen() {
       //선택되지 않은 아이콘의 색
       barStyle={{backgroundColor: 'white'}}>
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="find"
+        component={map}
         options={{
           tabBarLabel: '지도',
           tabBarIcon: ({color}) => <Icon name="room" color={color} size={24} />,
@@ -71,4 +73,4 @@ function HomeScreen({navigation}) {
   );
 }
 
-export default MainScreen;
+export default bottomBar;

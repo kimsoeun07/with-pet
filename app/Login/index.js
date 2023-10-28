@@ -3,12 +3,20 @@ import {
   KeyboardAvoidingView, StyleSheet,
   Text, TextInput, TouchableOpacity, View
 } from "react-native";
-// import { auth } from "../../firebase";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, 
-  GoogleAuthProvider, setPersistence, browserSessionPersistence, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword,
+  GoogleAuthProvider, setPersistence, browserSessionPersistence, signInWithPopup
+} from "firebase/auth";
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
-// import {  }
-import { SocialIcon } from 'react-native-elements'
+import { SocialIcon } from 'react-native-elements';
+import { useRouter } from "expo-router";
+// import { useNavigation } from '@react-navigation/native';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { ja } from "date-fns/locale";
+
 // Firebase 프로젝트의 구성 정보
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
@@ -21,12 +29,14 @@ const firebaseConfig = {
 };
 
 // Firebase 앱을 초기화
-// const app = initializeApp(firebaseConfig);
-if (getApps().length === 0) {
-  initializeApp(firebaseConfig);
-}
+const app = initializeApp(firebaseConfig);
+// if (getApps().length === 0) {
+//   initializeApp(firebaseConfig);
+// }
 
 const LoginScreen = () => {
+
+  const navigation = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,7 +47,11 @@ const LoginScreen = () => {
     }
     const provider = new GoogleAuthProvider();
     // google대신 다른것으로 할 수도 있음.
-    const auth = getAuth();
+    // const auth = getAuth();
+    const auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(AsyncStorage)
+    });
+    // const auth = getAuth();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     // google api scope 에서 people api들어가서 주소 바꿔서 다른 정보를 받아올 수도 있음.
 
@@ -54,7 +68,7 @@ const LoginScreen = () => {
       const user = result.user;
       console.log(user);
 
-      navigation.navigate("./tap/bottomBar");
+      // navigation.navigate("bottomBar");
 
       return { token, user }
 
@@ -85,25 +99,30 @@ const LoginScreen = () => {
       .then(userCredentials => {
         const user = userCredentials.user;
         console.log(user.email);
-        navigation.navigate("./tap/bottomBar");
+        navigation.push('/tap/Bar')
+
+        // navigation.navigate('bottomBar', {
+        //   screen: 'Home', // 또는 다른 탭 네비게이터의 스크린 이름
+        // });
       })
       .catch(error => alert(error.message));
   }
 
   const handleLogin = () => {
-    const auth = getAuth(); // Firebase Authentication 인스턴스 가져오기
-
+    const auth = getAuth(); // Firebase Authentication 인스턴스 가져오기;
+    
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
         console.log(`${user.email}으로 로그인 됨`);
-        navigation.navigate("http://localhost:19000/tap/bottomBar");
+        navigation.push('/tap/Bar')
       })
       .catch(error => alert(error.message));
   }
 
 
   return (
+
     <KeyboardAvoidingView
       style={styles.container}
       behavior="padding">
@@ -129,6 +148,8 @@ const LoginScreen = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={handleLogin}
+            // ('bottomBar', { screen: 'Home' })
+            // handleLogin
             style={styles.button}>
             <Text style={styles.buttonText}>로그인</Text>
           </TouchableOpacity>
@@ -161,7 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "500",
     color: '#2bc1c8',//#2dd4bf
-    fontFamily: 'Jockey One',
+    // fontFamily: 'Jockey One',
     margin: 15
   },
   container: {
