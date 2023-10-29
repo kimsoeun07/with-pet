@@ -42,15 +42,16 @@ const LoginScreen = () => {
 
   const loginWithGoogle = async () => {
     //파이어베이스 받아오고
-    if (getApps().length === 0) {
-      initializeApp(firebaseConfig);
-    }
+    // if (getApps().length === 0) {
+    //   initializeApp(firebaseConfig);
+    // }
+    const auth = getAuth(app); // 이미 초기화된 앱 사용
     const provider = new GoogleAuthProvider();
     // google대신 다른것으로 할 수도 있음.
     // const auth = getAuth();
-    const auth = initializeAuth(app, {
-      persistence: getReactNativePersistence(AsyncStorage)
-    });
+    // const auth = initializeAuth(app, {
+    //   persistence: getReactNativePersistence(AsyncStorage)
+    // });
     // const auth = getAuth();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     // google api scope 에서 people api들어가서 주소 바꿔서 다른 정보를 받아올 수도 있음.
@@ -67,6 +68,8 @@ const LoginScreen = () => {
       // 그 해석 result에서 토큰이랑 유저 받아오는 것
       const user = result.user;
       console.log(user);
+
+      navigation.push('/tap/Bar')
 
       // navigation.navigate("bottomBar");
 

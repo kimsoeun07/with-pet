@@ -126,10 +126,10 @@ export default function App() {
 
   return (
     <>
-    <Text>dkjfkdj</Text>
     <WebView
-      style={{ width: 200, height: 200 }}
-      source={{ uri: 'https://172.30.1.77:3000/walk' }}
+      style={{ marginTop:25 }}
+      source={{ uri: 'https://www.google.com/' }}
+      // https://172.30.1.77:3000/walk
       ref={webViewRef}
     />
     </>

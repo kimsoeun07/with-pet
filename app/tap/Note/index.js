@@ -80,7 +80,7 @@ function CalendarView() {
 
     try {
       // 서버로부터 해당 날짜에 대한 데이터를 가져옵니다.
-      const response = await fetch(`http://localhost:5000/api/walkmemo?date=${day.dateString}&userID=${userID}`);
+      const response = await fetch(`http://172.30.16.13:5000/api/walkmemo?date=${day.dateString}&userID=${userID}`);
       // const response = await fetch(`/api/walkmemo?date=${day.dateString}`);
       const data = await response.json();
 
@@ -112,7 +112,7 @@ function CalendarView() {
               // style={styles.webview}
               style={{ width: 100, height: 100 }}
               source={{ uri: `http://localhost:3000/MapView` }}
-            />
+              />
             <Text>coords : {result.coords}</Text>
             <Text>산책한 시간 : {result.time}</Text>
             <Text>산책한 날짜 : {String(result.date).slice(0, -4)}</Text>
@@ -129,6 +129,7 @@ function CalendarView() {
       items={items}
       loadItemsForMonth={loadItems}
       renderItem={renderItem}
+      style={{marginTop: 25}}
     />
 
   );

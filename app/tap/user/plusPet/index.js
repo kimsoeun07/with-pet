@@ -55,7 +55,7 @@ const PlusPetScreen = () => {
   const uploadToServer = async () => {
     try {
       // 서버 엔드포인트 URL 설정 (Express.js 서버 주소)
-      const serverUrl = "http://localhost:5000/api/users/add"; // 적절한 엔드포인트 URL로 변경
+      const serverUrl = "http://172.30.16.13:5000/api/users/add"; // 적절한 엔드포인트 URL로 변경
 
       // 서버로 보낼 데이터 객체 생성
       const data = {
@@ -94,14 +94,10 @@ const PlusPetScreen = () => {
 
   return (
     <NativeBaseProvider>
-      {/*  */}
-      {/* <View style={{ bg: "white", padding: 10, flexDirection: "row" }}>
-        <Text style={{ fontWeight: "bold", fontSize: 17 }} onPress={() => navigation.navigate("../bottomBar")}>&lt;</Text>
-        <Text style={{ fontWeight: "bold", fontSize: 17, textAlign: "center", width: "100%" }}>반려동물 정보 입력</Text>
-      </View> */}
       <View style={{ justifyContent: "center", alignItems: "center", width: "100%", marginBottom: 10 }}>
         <CustomImage  style={{ width: 200, height: 200 }} url={photo} onChangePhoto={handlePhotoChange} />
       </View>
+      <View style={{width:"100%", height: 130}}></View>
 
       <Flex justifyContent="center" alignItems="center" margin={5}>
         <Radio.Group
@@ -129,7 +125,8 @@ const PlusPetScreen = () => {
           <Text style={{ margin: 10, left: 0, width: 75 }}>이름</Text>
           <TextArea h={10} placeholder="반려동물 이름" w="65%" maxW="300" onChangeText={value => { setName(value) }} />
         </Flex>
-        <br />
+        {/* <br /> */}
+        <View style={{width: "100%", height: 10}}></View>
         <Flex direction="row" alignItems="center">
           <Text style={{ margin: 10, width: 75 }}>생년월일</Text>
           <TextArea h={10} placeholder="2008-07-02의 형식으로 적어주세요" w="65%" maxW="300" onChangeText={value => { setBirth(value) }} />

@@ -84,7 +84,7 @@ export default function Page() {
     const fetchData = async () => {
       try {
         if (!userID) return; // userID 값이 없으면 API 요청 건너뛰기
-        const response = await fetch(`http://localhost:5000/api/Pet?userID=${userID}`);
+        const response = await fetch(`http://172.30.16.13:5000/api/Pet?userID=${userID}`);
         const data = await response.json();
         setData(data);
       } catch (error) {
@@ -108,8 +108,8 @@ export default function Page() {
     // 해당 pet데이터 삭제
     // _id를 전달 , 같은 데이터를 삭제하도록 하자.
     console.log(`id = ${data_id}`)
-
-    fetch('http://localhost:5000/api/Petdelete', {
+    // http://localhost:5000/api/Petdelete
+    fetch('http://172.30.16.13:5000/api/Petdelete', {
       method: 'DELETE', // DELETE 메서드 사용
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ _id: data_id })
@@ -132,7 +132,7 @@ export default function Page() {
 
   return (
     <NativeBaseProvider>
-      <View>
+      <View style={{ marginTop: 25 }}>
         <View style={styles.subject}>
           <Text onPress={() => navigation.navigate("./bottomBar")} style={{ left: 10, position: 'absolute' }}>&lt;</Text>
           <Text style={{ fontSize: 17, fontWeight: "bold", textAlign: "center", }}>
@@ -165,8 +165,10 @@ export default function Page() {
         </View>
 
         {/* 여기 부터 */}
-        <View style={{ flexDirection: "row", maxHeight: '100%', // 최대 높이를 화면 높이의 30%로 설정
-            overflowY: 'auto'}}>
+        <View style={{
+          flexDirection: "row", maxHeight: '100%', // 최대 높이를 화면 높이의 30%로 설정
+          overflowY: 'auto'
+        }}>
 
           <View>
             {data.map((result, index) => (
@@ -188,7 +190,7 @@ export default function Page() {
               fontWeight: "bold",
               color: "black",
               position: "absolute",
-              bottom: iconBottomPosition,
+              // bottom: iconBottomPosition
               // bottom: -150,
               right: 20
             }}

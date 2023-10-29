@@ -39,8 +39,8 @@ const CustomImage = ({ url, onChangePhoto }) => {
     <NativeBaseProvider>
 
       <Container style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <View style={{ position: "relative" }}>
-          {/* Display the selected image or the default gray avatar */}
+        <View>
+           {/* style={{ position: "relative" }} */}
           {url ? (
             <Avatar
               source={{ uri: url }}
@@ -49,7 +49,7 @@ const CustomImage = ({ url, onChangePhoto }) => {
           ) : (
             <Avatar
               source={require('./img/default_profile.png')}
-              style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20 }}
+              style={{ width: 100, height: 100, borderRadius: 75, alignSelf: 'center', marginTop: 20}}
             />
           )}
 
@@ -57,18 +57,20 @@ const CustomImage = ({ url, onChangePhoto }) => {
           <Button
             onPress={handlePhotoBtnPress}
             style={{
-              position: "absolute",
+              // position: "absolute",
               bottom: 0,
               right: 0,
-              width: 30,
-              height: 30,
-              borderRadius: 15,
+              width: 70,
+              height: 40,
+              // alignItems: "center",
+              right: -13,
+              // borderRadius: 15,
               justifyContent: "center",
             }}
           >
             <Icon
               name="camera-alt"
-              style={{ fontSize: 20, textAlign: "center", position: "sticky" }}
+              style={{ fontSize: 20, textAlign: "center"}} //, position: "sticky" 
             />
           </Button>
         </View>
