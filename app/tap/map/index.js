@@ -69,7 +69,7 @@ useEffect(() => {
         ref={ref => {
           this.webview = ref;
         }}
-        javaScriptEnabledAndroid={true}
+        // javaScriptEnabledAndroid={true}
         // injectedJavaScript={location}
         // injectedJavaScript={injectedJavaScript}
 
