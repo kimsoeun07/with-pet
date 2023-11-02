@@ -61,7 +61,7 @@ function CalendarView() {
     onAuthStateChanged(auth, user => {
       if (!user) {
         console.log("로그아웃 상태입니다.");
-        setUserID(ull)
+        setUserID(null)
       } else {
         console.log("현재 로그인된 구글 이메일 주소: ", user.email);
         setUserID(user.email)
@@ -77,9 +77,16 @@ function CalendarView() {
       // 서버로부터 해당 날짜에 대한 데이터를 가져옵니다. http://172.30.14.29:5000 ${userID} 
       const userid = "ksoeun6204@naver.com"
       const response = await fetch(`https://petmap-ten.vercel.app/api/walkmemo?date=${day.dateString}&userID=${userid}`)
+
+      if (!response.ok) {
+        console.error("Server response:", response);
+        return;
+      }
+
       console.log(`https://petmap-ten.vercel.app/api/walkmemo?date=${day.dateString}&userID=${userid}`)
       const data = await response.json();
-      console.log(data)
+      // console.log(data)
+console.log('Server data:', data);
       
       setCoords(data.coords)
 
@@ -97,20 +104,11 @@ function CalendarView() {
   };
 
 
-  const renderItem = (item) => {
+  const renderItem =  ({ item }) => {
 
-    // const coords = item.coords;
-
-    // useEffect(() => {
-    //   if (webViewRef.current) {
-    //     webViewRef.current.postMessage(coords);
-    //   }
-    // }, [coords]);
-
-    // useEffect(() => {
-    //   webViewRef.current.postMessage(coords);
-    // }, [])
-    const data = items[item.dateString]; // 해당 날짜의 데이터를 가져옵니다.
+    if (!item) {
+      return <Text>해당 날짜에 산책 데이터가 없습니다.</Text>
+    }
 
     console.log(item)
 
@@ -134,9 +132,10 @@ function CalendarView() {
             <Text>산책한 시간 : {result.time}</Text>
             <Text>산책한 날짜 : {String(result.date).slice(0, -4)}</Text>
           </View>
-        ))
+          ))
         }
       </View>
+      
     );
   };
 
