@@ -6,15 +6,6 @@ import WebView from 'react-native-webview';
 import { getApps, initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-
-// //키보드 부분
-// import {
-//   Pressable,
-//   Keyboard,
-//   KeyboardAvoidingView,
-//   TouchableWithoutFeedback
-// } from 'react-native';
-
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
   authDomain: "test-aae13.firebaseapp.com",
@@ -32,7 +23,7 @@ if (!getApps().length) {
 
 
 function CalendarView() {
-  const webViewRef = useRef()
+  const webViewRef = useRef();
 
   const posts = [
     {
@@ -49,41 +40,47 @@ function CalendarView() {
     },
   ];
 
-  const markedDates = posts.reduce((acc, current) => {
-    const formattedDate = format(new Date(current.date), "yyyy-MM-dd");
-    acc[formattedDate] = { marked: true };
-    return acc;
-  }, {});
-
-  const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), "yyyy-MM-dd")
-  );
 
   const [items, setItems] = useState({});
   const [userID, setUserID] = useState('');
   const [coords, setCoords] = useState([]);
 
-  useEffect(() => {
-    const auth = getAuth()
+  // useEffect(() => {
+  //   const auth = getAuth()
+  //   onAuthStateChanged(auth, user => {
+  //     if (user) {
+  //       setUserID(user.email)
+  //     } else {
+  //       setUserID(null)
+  //     }
+  //   });
+  // }, [])
+
+  const onAuthChangedListener = async () => {
+    const auth = getAuth();
     onAuthStateChanged(auth, user => {
       if (!user) {
-        setUserID(null)
+        console.log("로그아웃 상태입니다.");
+        setUserID(ull)
       } else {
+        console.log("현재 로그인된 구글 이메일 주소: ", user.email);
         setUserID(user.email)
       }
     });
-  }, [])
+  }
 
 
   // 메모 데이터를 가져오거나 업데이트하는 함수
   const loadItems = async (day) => {
-
     try {
-      // 서버로부터 해당 날짜에 대한 데이터를 가져옵니다.
-      const response = await fetch(`http://172.30.16.13:5000/api/walkmemo?date=${day.dateString}&userID=${userID}`);
-      // const response = await fetch(`/api/walkmemo?date=${day.dateString}`);
+      await onAuthChangedListener();
+      // 서버로부터 해당 날짜에 대한 데이터를 가져옵니다. http://172.30.14.29:5000 ${userID} 
+      const userid = "ksoeun6204@naver.com"
+      const response = await fetch(`https://petmap-ten.vercel.app/api/walkmemo?date=${day.dateString}&userID=${userid}`)
+      console.log(`https://petmap-ten.vercel.app/api/walkmemo?date=${day.dateString}&userID=${userid}`)
       const data = await response.json();
-
+      console.log(data)
+      
       setCoords(data.coords)
 
       // // items 객체에 메모 아이템을 저장합니다.
@@ -91,28 +88,48 @@ function CalendarView() {
         [day.dateString]: [data],
       });
 
-      console.log(data)
+
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+    
   };
 
+
   const renderItem = (item) => {
-    const apikey = 'a0bf728be4ea8a8be3c00464e7c70c98';
-    useEffect(() => {
-      webViewRef.current.postMessage(coords);
-    }, [])
+
+    // const coords = item.coords;
+
+    // useEffect(() => {
+    //   if (webViewRef.current) {
+    //     webViewRef.current.postMessage(coords);
+    //   }
+    // }, [coords]);
+
+    // useEffect(() => {
+    //   webViewRef.current.postMessage(coords);
+    // }, [])
+    const data = items[item.dateString]; // 해당 날짜의 데이터를 가져옵니다.
+
+    console.log(item)
 
     return (
       <View >
+        {/* item */}
         {item.map((result, index) => (
           <View key={index} style={{ margin: 10, backgroundColor: 'white', borderRadius: 10, padding: 10 }}>
             <WebView
               ref={webViewRef}
               // style={styles.webview}
               style={{ width: 100, height: 100 }}
-              source={{ uri: `http://localhost:3000/MapView` }}
-              />
+              source={{ uri: `https://petmap-ten.vercel.apps/MapView` }}
+              onLoad={() => {
+                if (webViewRef.current) {
+                  webViewRef.current.postMessage(result.coords);
+                }
+              }}
+            />
             <Text>coords : {result.coords}</Text>
             <Text>산책한 시간 : {result.time}</Text>
             <Text>산책한 날짜 : {String(result.date).slice(0, -4)}</Text>
@@ -129,57 +146,12 @@ function CalendarView() {
       items={items}
       loadItemsForMonth={loadItems}
       renderItem={renderItem}
-      style={{marginTop: 25}}
+      style={{ marginTop: 25 }}
     />
 
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 16,
-    backgroundColor: "#fff",
-  },
-  calendar: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  memoContainer: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#f9f9f9",
-  },
-  selectedDate: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  memoInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 8,
-    marginTop: 8,
-    minHeight: 100,
-  },
-  saveButton: {
-    backgroundColor: "#009688",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 16,
-    alignItems: "center",
-  },
-  saveButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
 
-  Icon: {
-    position: "absolute",
-    right: 0
-  }
-});
 
 export default CalendarView;

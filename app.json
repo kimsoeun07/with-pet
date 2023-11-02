@@ -5,6 +5,15 @@
       "bundler": "metro"
     },
     "name": "my-app2",
-    "slug": "my-app2"
+    "slug": "my-app2",
+    
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ]
   }
 }

@@ -80,19 +80,21 @@ export default function Page() {
     });
   }
 
+  const fetchData = async () => {
+    try {
+      if (!userID) return; // userID 값이 없으면 API 요청 건너뛰기 api.Pet.$userID   /$userID?userID=
+      const response = await fetch(`https://petmap-ten.vercel.app/api/Pet/${userID}`);
+      const data = await response.json();
+      setData(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!userID) return; // userID 값이 없으면 API 요청 건너뛰기
-        const response = await fetch(`http://172.30.16.13:5000/api/Pet?userID=${userID}`);
-        const data = await response.json();
-        setData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
     fetchData();
   }, [userID]);
+  // 
 
   useEffect(() => {
     const unsubscribe = onAuthChangedListener();
@@ -104,24 +106,18 @@ export default function Page() {
     };
   }, [navigation]);
 
-  const Petdelete = () => {
-    // 해당 pet데이터 삭제
-    // _id를 전달 , 같은 데이터를 삭제하도록 하자.
-    console.log(`id = ${data_id}`)
-    // http://localhost:5000/api/Petdelete
-    fetch('http://172.30.16.13:5000/api/Petdelete', {
-      method: 'DELETE', // DELETE 메서드 사용
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ _id: data_id })
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.message); // 삭제 결과 메시지 출력
-        setShowModal(false); // 모달 닫기
-        setData(data.filter(item => item._id !== data_id));
-      })
-      .catch(error => console.error('Error:', error));
+  const Petdelete = async () => {
+      try {
+        if (!userID) return; // userID 값이 없으면 API 요청 건너뛰기 api.Pet.$userID   /$userID?userID=
+        await fetch(`https://petmap-ten.vercel.app/api/Petdelete/${data_id}`);
 
+        fetchData();
+        setIsOpen(false);
+        onClose();
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
 
   }
 
@@ -134,8 +130,8 @@ export default function Page() {
     <NativeBaseProvider>
       <View style={{ marginTop: 25 }}>
         <View style={styles.subject}>
-          <Text onPress={() => navigation.navigate("./bottomBar")} style={{ left: 10, position: 'absolute' }}>&lt;</Text>
-          <Text style={{ fontSize: 17, fontWeight: "bold", textAlign: "center", }}>
+          {/* <Text onPress={() => navigation.navigate("./bottomBar")} style={{ left: 10, position: 'absolute' }}>&lt;</Text> */}
+          <Text style={{ fontSize: 17, fontWeight: "bold", textAlign: "center", paddingTop: 10 }}>
             프로필
             <Icon color="black" as={Ionicons} name="log-out-outline" size="sm" position="absolute" right={15} onPress={() => setIsOpen(!isOpen)} />
           </Text>
@@ -173,7 +169,6 @@ export default function Page() {
           <View>
             {data.map((result, index) => (
               <View key={index} style={{ margin: 10, backgroundColor: 'white', borderRadius: 10, padding: 10, width: 300, height: 200, flexDirection: "row", justifyContent: "center" }}>
-
                 <Image source={{ uri: result.imageURL }} style={styles.img} alt="잘못된 이미지" />
                 <Text style={{ marginLeft: 20, fontWeight: "bold", fontSize: 15 }}>{'\n'}{result.name}{'\n\n'}{result.birthday}</Text>
                 <Fab onPress={() => { setData_id(result._id); setShowModal(true) }} renderInPortal={false} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="delete" size="sm" />} />
@@ -182,22 +177,25 @@ export default function Page() {
             }
           </View>
           {/* 여기 까지 */}
+
           <Icon
             as={AntDesign}
             name="pluscircleo"
             style={{
-              fontSize: 30,
+              fontSize: 35,
+              textAlign: "center",
               fontWeight: "bold",
               color: "black",
               position: "absolute",
-              // bottom: iconBottomPosition
-              // bottom: -150,
-              right: 20
+              width: 50,
+              height: 50,
+              bottom: -50,
+              right: 20,
+              paddingTop: 25
             }}
             //   onPress={() => navigation.navigate("")}
             onPress={() => navigation.navigate('반려동물 정보입력')}
           />
-
 
         </View>
 

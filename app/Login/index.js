@@ -5,17 +5,12 @@ import {
 } from "react-native";
 import {
   createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword,
-  GoogleAuthProvider, setPersistence, browserSessionPersistence, signInWithPopup
+  GoogleAuthProvider, setPersistence, browserSessionPersistence, signInWithPopup, signInWithRedirect
 } from "firebase/auth";
 import { initializeApp, getApps, FirebaseError } from 'firebase/app';
 import { SocialIcon } from 'react-native-elements';
 import { useRouter } from "expo-router";
-// import { useNavigation } from '@react-navigation/native';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import { ja } from "date-fns/locale";
 
 // Firebase 프로젝트의 구성 정보
 const firebaseConfig = {
@@ -41,56 +36,73 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   const loginWithGoogle = async () => {
-    //파이어베이스 받아오고
-    // if (getApps().length === 0) {
-    //   initializeApp(firebaseConfig);
-    // }
+
+    if (getApps().length === 0) {
+      initializeApp(firebaseConfig);
+    }
+
     const auth = getAuth(app); // 이미 초기화된 앱 사용
     const provider = new GoogleAuthProvider();
-    // google대신 다른것으로 할 수도 있음.
-    // const auth = getAuth();
-    // const auth = initializeAuth(app, {
-    //   persistence: getReactNativePersistence(AsyncStorage)
-    // });
-    // const auth = getAuth();
-    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    // google api scope 에서 people api들어가서 주소 바꿔서 다른 정보를 받아올 수도 있음.
 
-    // try catch는 에러를 잡는 구문
-    try {
-      await setPersistence(auth, browserSessionPersistence);
-      // 브라우저에 내 로그인 정보 기록
-      const result = await signInWithPopup(auth, provider);
-      // 어떻게 뜰지를 말하는 건데 popup이니까 팝업
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      // 해석을 해주는 거
-      const token = credential?.accessToken;
-      // 그 해석 result에서 토큰이랑 유저 받아오는 것
-      const user = result.user;
-      console.log(user);
-
-      navigation.push('/tap/Bar')
-
-      // navigation.navigate("bottomBar");
-
-      return { token, user }
-
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        //파이어베이스 오류인 경우
-        const code = error.code;
-        const message = error.message;
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+        alert(user.displayName);
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
         // The email of the user's account used.
-        const email = error.customData?.email;
+        const email = error.customData.email;
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log({
-          code, message, email, credential
-        });
-      } else {
-        console.log(error);
-      }
-    }
+        console.log(errorMessage)
+        // ...
+      });
+
+    // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+    // try {
+    //   await setPersistence(auth, browserSessionPersistence);
+    //   // 브라우저에 내 로그인 정보 기록
+    //   // const result = await signInWithPopup(auth, provider);
+    //   const result = await signInWithRedirect(auth, provider)
+    //   // 어떻게 뜰지를 말하는 건데 popup이니까 팝업
+    //   const credential = GoogleAuthProvider.credentialFromResult(result);
+    //   // 해석을 해주는 거
+    //   const token = credential?.accessToken;
+    //   // 그 해석 result에서 토큰이랑 유저 받아오는 것
+    //   const user = result.user;
+    //   console.log(user);
+
+    //   navigation.push('/tap/Bar')
+
+    //   // navigation.navigate("bottomBar");
+
+    //   return { token, user }
+
+    // } catch (error) {
+    //   if (error instanceof FirebaseError) {
+    //     //파이어베이스 오류인 경우
+    //     const code = error.code;
+    //     const message = error.message;
+    //     // The email of the user's account used.
+    //     const email = error.customData?.email;
+    //     // The AuthCredential type that was used.
+    //     const credential = GoogleAuthProvider.credentialFromError(error);
+    //     console.log({
+    //       code, message, email, credential
+    //     });
+    //   } else {
+    //     console.log(error);
+    //   }
+    // }
   }
 
 
@@ -113,7 +125,7 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     const auth = getAuth(); // Firebase Authentication 인스턴스 가져오기;
-    
+
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;

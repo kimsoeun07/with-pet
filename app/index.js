@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './Login';
 import Page from './tap/main';
 // import MainScreen from './tap/bottomBar';
-import bottomBar from './tap/Bar';
+import BottomBar from './tap/Bar';
 
 const Stack = createStackNavigator();
 
@@ -13,8 +13,8 @@ function App() {
       <Stack.Navigator initialRouteName="Page">
       {/* initialRouteName="FirstView" 기본 화면 설정 */}
           <Stack.Screen
-              name="bottomBar"
-              component={bottomBar}
+              name="BottomBar"
+              component={BottomBar}
               options={{ headerShown: false }}
           />
           <Stack.Screen

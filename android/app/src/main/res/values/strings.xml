@@ -1,3 +1,6 @@
 <resources>
     <string name="kakao_app_key">e58cc7cfed0131c3b101bc049b1ccb32</string>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </resources>

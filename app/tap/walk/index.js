@@ -128,7 +128,7 @@ export default function App() {
     <>
     <WebView
       style={{ marginTop:25 }}
-      source={{ uri: 'https://www.google.com/' }}
+      source={{ uri: 'https://petmap-ten.vercel.app/walk' }}
       // https://172.30.1.77:3000/walk
       ref={webViewRef}
     />

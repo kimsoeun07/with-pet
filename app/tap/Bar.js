@@ -9,7 +9,7 @@ import map from './map';
 
 const Tab = createMaterialBottomTabNavigator();
 
-function bottomBar() {
+function BottomBar() {
   console.log(Note)
   return (
     <Tab.Navigator
@@ -73,4 +73,4 @@ function HomeScreen({navigation}) {
   );
 }
 
-export default bottomBar;
+export default BottomBar;

@@ -13,6 +13,8 @@ import {
   initializeApp,
 } from 'firebase/app';
 
+import { useNavigation } from '@react-navigation/native';
+
 const firebaseConfig = {
   apiKey: "AIzaSyAE0QB1aMijN9XjGYXoCbYX0cBZx2wPPaI",
   authDomain: "test-aae13.firebaseapp.com",
@@ -30,6 +32,8 @@ if (!getApps().length) {
 
 
 const PlusPetScreen = () => {
+
+  const navigation = useNavigation();
 
   const [photo, setPhoto] = useState(undefined);
   const [value, setValue] = React.useState("one");
@@ -55,7 +59,7 @@ const PlusPetScreen = () => {
   const uploadToServer = async () => {
     try {
       // 서버 엔드포인트 URL 설정 (Express.js 서버 주소)
-      const serverUrl = "http://172.30.16.13:5000/api/users/add"; // 적절한 엔드포인트 URL로 변경
+      const serverUrl = "https://petmap-ten.vercel.app/api/users/add"; // 적절한 엔드포인트 URL로 변경
 
       // 서버로 보낼 데이터 객체 생성
       const data = {
@@ -78,6 +82,7 @@ const PlusPetScreen = () => {
       if (response.ok) {
         // 서버에서 응답이 성공적으로 왔을 때 처리
         console.log("데이터 업로드 성공");
+        navigation.navigate('Home')
       } else {
         // 서버에서 응답이 실패했을 때 처리
         console.error("데이터 업로드 실패");
